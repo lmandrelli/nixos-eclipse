@@ -45,9 +45,12 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
-  # Enable the GNOME Desktop Environment.
+  # Enable the GNOME Desktop Environment with Wayland support.
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
+  
+  # Configure GDM to use Wayland by default
+  services.xserver.displayManager.gdm.wayland = true;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -131,8 +134,7 @@
     "nvidia-drm.fbdev=1"
   ];
 
-  # Configuration Num Lock pour l'affichage de connexion
-  services.displayManager.sddm.autoNumlock = true;
+  
   
   # === CONFIGURATION GRAPHIQUE NVIDIA ===
   # Support NVIDIA avec drivers open-kernel
@@ -269,6 +271,11 @@
 
     # AppImage support
     appimage-run
+    
+    # === OUTILS GNOME SYSTÈME ===
+    gnome-tweaks         # Outil de personnalisation GNOME
+    dconf-editor         # Éditeur de configuration dconf
+    glib                 # Bibliothèques GLib (nécessaire pour certaines applications)
   ];
 
   # === SERVICES SPÉCIALISÉS ===
@@ -276,13 +283,10 @@
   security.polkit.enable = true;
 
   # Portal pour les applications Flatpak/Snap
-  # CORRECTION: Suppression de xdg-desktop-portal-hyprland pour éviter le conflit
-  # Home Manager s'occupera de cette configuration
   xdg.portal = {
     enable = true;
     extraPortals = with pkgs; [
       xdg-desktop-portal-gtk
-      # xdg-desktop-portal-hyprland supprimé pour éviter le conflit
     ];
    };
 

@@ -18,8 +18,7 @@
   home.packages = with pkgs; [
     # === COMPATIBILITÉ WAYLAND/X11 ===
     xwayland xorg.xhost
-    # Bridge X11 vers Wayland pour KDE Plasma
-    xdg-desktop-portal-wlr
+    
     xdg-desktop-portal-gtk
     # Num Lock control
     numlockx
@@ -71,7 +70,7 @@
     
     # === BUREAUTIQUE ===
     # LibreOffice - suite bureautique complète
-    libreoffice-qt # Version Qt pour une meilleure intégration KDE
+    libreoffice
     
     # Obsidian - prise de notes avec liens et graphiques
     obsidian
@@ -106,27 +105,31 @@
     dive              # Analyse des couches d'images Docker
     ctop              # Monitoring des conteneurs en temps réel
     
-    # === HYPRLAND ECOSYSTEM ===
-    waybar        # Barre de statut personnalisable
-    wofi          # Lanceur d'applications style rofi
-    swww          # Gestion des fonds d'écran animés
-    grim slurp    # Outils de capture d'écran
-    wlogout       # Menu de déconnexion élégant
-    swaylock-effects # Écran de verrouillage avec effets
-    swayidle      # Gestion de l'inactivité
-    mako          # Système de notifications
+    # === OUTILS SYSTÈME GNOME ===
     pavucontrol   # Contrôle audio graphique
     brightnessctl # Contrôle de la luminosité
     playerctl     # Contrôle des lecteurs multimédia
-    cliphist      # Gestionnaire d'historique presse-papiers
-    wtype         # Outil de saisie Wayland
     
-    # Outils ML4W-inspired pour Hyprland
-    hypridle      # Gestion de l'inactivité Hyprland
-    hyprlock      # Écran de verrouillage Hyprland
-    hyprpicker    # Sélecteur de couleurs
-    hyprshot      # Screenshots optimisés Hyprland
-    wl-clipboard-rs # Gestionnaire presse-papiers Rust
+    # === APPLICATIONS GNOME ===
+    gnome-terminal        # Terminal GNOME
+    nautilus              # Gestionnaire de fichiers GNOME
+    gnome-text-editor     # Éditeur de texte GNOME
+    gnome-calculator      # Calculatrice GNOME
+    gnome-calendar        # Calendrier GNOME
+    gnome-weather         # Météo GNOME
+    gnome-clocks          # Horloge GNOME
+    gnome-maps            # Cartes GNOME
+    gnome-contacts        # Contacts GNOME
+    gnome-logs            # Journaux système GNOME
+    gnome-system-monitor  # Moniteur système GNOME
+    eog                   # Visionneur d'images GNOME
+    evince                # Visionneur de documents PDF GNOME
+    gnome-screenshot      # Capture d'écran GNOME
+    
+    # === EXTENSIONS GNOME ===
+    gnomeExtensions.user-themes
+    gnomeExtensions.dash-to-dock
+    gnomeExtensions.appindicator
     
     # === APPIMAGE SUPPORT ===
     appimage-run  # Nécessaire pour exécuter les AppImages sur NixOS
@@ -269,6 +272,10 @@
       nrt = "sudo nixos-rebuild test --flake .";
       hms = "home-manager switch --flake .";
       
+      # GNOME spécifiques
+      restart-gnome = "systemctl --user restart gnome-shell";
+      logout-gnome = "gnome-session-quit --logout";
+      
       # Docker raccourcis
       d = "docker";
       dc = "docker-compose";
@@ -311,270 +318,68 @@
     nix-direnv.enable = true; # Support nix-shell automatique
   };
 
-  # === CONFIGURATION HYPRLAND ===
-  # Configuration inspirée de mylinuxforwork/dotfiles
-  wayland.windowManager.hyprland = {
-    enable = true;
-    package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-    
-    # Configuration Hyprland avec style ML4W
-    settings = {
-      # === CONFIGURATION MONITEUR ===
-      monitor = [
-        ",preferred,auto,1" # Détection automatique, changez selon vos besoins
-      ];
-      
-      # === PROGRAMMES DE DÉMARRAGE ===
-      # Inspiré de ML4W dotfiles avec applications personnalisées
-      exec-once = [
-        "waybar"                    # Barre de statut
-        "mako"                      # Notifications  
-        "swww init"                 # Fond d'écran avec support animations
-        "swayidle -w timeout 300 'swaylock-effects' timeout 600 'hyprctl dispatch dpms off' resume 'hyprctl dispatch dpms on' before-sleep 'swaylock-effects'"
-        "wl-paste --type text --watch cliphist store"    # Gestionnaire presse-papiers
-        "wl-paste --type image --watch cliphist store"   # Images presse-papiers
-      ];
-      
-      # === CONFIGURATION ENVIRONNEMENT ===
-      # Variables d'environnement inspirées de ML4W
-      env = [
-        "XCURSOR_SIZE,24"
-        "HYPRCURSOR_SIZE,24"
-        "QT_QPA_PLATFORM,wayland"
-        "QT_QPA_PLATFORMTHEME,qt5ct"
-        "QT_WAYLAND_DISABLE_WINDOWDECORATION,1"
-        "QT_AUTO_SCREEN_SCALE_FACTOR,1"
-        "MOZ_ENABLE_WAYLAND,1"
-        "GDK_BACKEND,wayland,x11"
-        # Fix for X11 apps on Wayland
-        "XDG_SESSION_TYPE,wayland"
-        "WAYLAND_DISPLAY,wayland-1"
-        "CLUTTER_BACKEND,wayland"
-        "SDL_VIDEODRIVER,wayland"
-      ];
-      
-      # === CONFIGURATION INPUT ===
-      input = {
-        kb_layout = "fr";           # Clavier français
-        kb_variant = "";
-        kb_model = "";
-        kb_options = "";
-        kb_rules = "";
-        
-        follow_mouse = 1;
-        
-        touchpad = {
-          natural_scroll = false;
-        };
-        
-        sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
-      };
-      
-      # === CONFIGURATION GÉNÉRALE ===
-      # Améliorations inspirées de ML4W
-      general = {
-        gaps_in = 6;
-        gaps_out = 12;
-        border_size = 2;
-        
-        # Couleurs des bordures (style ML4W moderne)
-        "col.active_border" = "rgba(ca9ee6ff) rgba(f2d5cfff) 45deg";
-        "col.inactive_border" = "rgba(b4befecc) rgba(6c7086cc) 45deg";
-        
-        resize_on_border = true;
-        allow_tearing = false;
-        no_border_on_floating = false;
-        
-        layout = "dwindle";
-      };
-      
-      # === CONFIGURATION DÉCORATION ===
-      # Décorations améliorées style ML4W
-      decoration = {
-        rounding = 12;
-        
-        active_opacity = 1.0;
-        inactive_opacity = 0.95;
-        fullscreen_opacity = 1.0;
-        
-        drop_shadow = true;
-        shadow_range = 6;
-        shadow_render_power = 3;
-        "col.shadow" = "rgba(181825aa)";
-        "col.shadow_inactive" = "rgba(181825dd)";
-        
-        # Effets de flou avancés
-        blur = {
-          enabled = true;
-          size = 5;
-          passes = 3;
-          ignore_opacity = true;
-          new_optimizations = true;
-          vibrancy = 0.1696;
-        };
-        
-        # Dim des fenêtres inactives
-        dim_inactive = true;
-        dim_strength = 0.1;
-      };
-      
-      # === CONFIGURATION ANIMATIONS ===
-      animations = {
-        enabled = true;
-        
-        # Courbes d'animation fluides
-        bezier = "myBezier, 0.05, 0.9, 0.1, 1.05";
-        
-        animation = [
-          "windows, 1, 7, myBezier"
-          "windowsOut, 1, 7, default, popin 80%"
-          "border, 1, 10, default"
-          "borderangle, 1, 8, default"
-          "fade, 1, 7, default"
-          "workspaces, 1, 6, default"
-        ];
-      };
-      
-      # === LAYOUT DWINDLE ===
-      dwindle = {
-        pseudotile = true;
-        preserve_split = true;
-      };
-      
-      # === GESTES ===
-      gestures = {
-        workspace_swipe = false;
-      };
-      
-      # === CONFIGURATION PÉRIPHÉRIQUES ===
-      device = [
-        {
-          name = "epic-mouse-v1";
-          sensitivity = -0.5;
-        }
-      ];
-      
-      # === RACCOURCIS CLAVIER ===
-      "$mod" = "SUPER";
-      
-      bind = [
-        # Applications principales
-        "$mod, Q, exec, kitty"                    # Terminal
-        "$mod, C, killactive,"                    # Fermer fenêtre
-        "$mod, M, exit,"                          # Quitter Hyprland
-        "$mod, E, exec, dolphin"                  # Gestionnaire de fichiers
-        "$mod, V, togglefloating,"                # Mode flottant
-        "$mod, R, exec, wofi --show drun"         # Lanceur d'applications
-        "$mod, P, pseudo,"                        # Pseudotiling
-        "$mod, J, togglesplit,"                   # Changer orientation split
-        
-        # Navigation entre fenêtres
-        "$mod, left, movefocus, l"
-        "$mod, right, movefocus, r"
-        "$mod, up, movefocus, u"
-        "$mod, down, movefocus, d"
-        
-        # Navigation entre workspaces
-        "$mod, 1, workspace, 1"
-        "$mod, 2, workspace, 2"
-        "$mod, 3, workspace, 3"
-        "$mod, 4, workspace, 4"
-        "$mod, 5, workspace, 5"
-        "$mod, 6, workspace, 6"
-        "$mod, 7, workspace, 7"
-        "$mod, 8, workspace, 8"
-        "$mod, 9, workspace, 9"
-        "$mod, 0, workspace, 10"
-        
-        # Déplacer fenêtres vers workspaces
-        "$mod SHIFT, 1, movetoworkspace, 1"
-        "$mod SHIFT, 2, movetoworkspace, 2"
-        "$mod SHIFT, 3, movetoworkspace, 3"
-        "$mod SHIFT, 4, movetoworkspace, 4"
-        "$mod SHIFT, 5, movetoworkspace, 5"
-        "$mod SHIFT, 6, movetoworkspace, 6"
-        "$mod SHIFT, 7, movetoworkspace, 7"
-        "$mod SHIFT, 8, movetoworkspace, 8"
-        "$mod SHIFT, 9, movetoworkspace, 9"
-        "$mod SHIFT, 0, movetoworkspace, 10"
-        
-        # Workspace spécial (scratchpad)
-        "$mod, S, togglespecialworkspace, magic"
-        "$mod SHIFT, S, movetoworkspace, special:magic"
-        
-        # Navigation workspaces avec molette souris
-        "$mod, mouse_down, workspace, e+1"
-        "$mod, mouse_up, workspace, e-1"
-        
-        # Captures d'écran (style ML4W)
-        ", Print, exec, grim -g \"$(slurp)\" - | wl-copy && notify-send 'Capture d'écran' 'Zone sélectionnée copiée'"
-        "$mod, Print, exec, grim - | wl-copy && notify-send 'Capture d'écran' 'Écran complet copié'"
-        "$mod SHIFT, S, exec, grim -g \"$(slurp)\" ~/Images/screenshot-$(date +%Y%m%d-%H%M%S).png"
-        
-        # Presse-papiers (ML4W style)
-        "$mod, V, exec, cliphist list | wofi --dmenu | cliphist decode | wl-copy"
-        
-        # Applications supplémentaires
-        "$mod, T, exec, kitty"
-        "$mod, B, exec, firefox"
-        "$mod SHIFT, E, exec, wlogout"
-        
-        # Contrôles multimédia
-        ", XF86AudioPlay, exec, playerctl play-pause"
-        ", XF86AudioNext, exec, playerctl next"
-        ", XF86AudioPrev, exec, playerctl previous"
-        ", XF86AudioRaiseVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ +5%"
-        ", XF86AudioLowerVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ -5%"
-        ", XF86AudioMute, exec, pactl set-sink-mute @DEFAULT_SINK@ toggle"
-        
-        # Contrôle luminosité
-        ", XF86MonBrightnessUp, exec, brightnessctl set +5%"
-        ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
-      ];
-      
-      # Raccourcis de redimensionnement et déplacement
-      bindm = [
-        "$mod, mouse:272, movewindow"
-        "$mod, mouse:273, resizewindow"
-      ];
-      
-      # === RÈGLES DE FENÊTRES ===
-      windowrulev2 = [
-        # Transparence pour certaines applications
-        "opacity 0.8 0.8,class:^(kitty)$"
-        
-        # Applications flottantes
-        "float,class:^(pavucontrol)$"
-        "float,class:^(bitwarden)$"
-        
-        # Taille fixe pour certaines applications
-        "size 800 600,class:^(pavucontrol)$"
-      ];
-    };
-  };
+  
 
-  # === CONFIGURATION GTK (pour compatibilité KDE) ===
+  # === CONFIGURATION GTK (pour GNOME) ===
   gtk = {
     enable = true;
     
     theme = {
-      name = "Breeze-Dark";
-      package = pkgs.kdePackages.breeze-gtk;
+      name = "Adwaita-dark";
+      package = pkgs.adwaita-icon-theme;
     };
     
     iconTheme = {
-      name = "breeze-dark";
-      package = pkgs.kdePackages.breeze-icons;
+      name = "Adwaita";
+      package = pkgs.adwaita-icon-theme;
     };
     
     cursorTheme = {
-      name = "breeze_cursors";
-      package = pkgs.kdePackages.breeze;
+      name = "Adwaita";
+      package = pkgs.adwaita-icon-theme;
     };
     
     font = {
       name = "Noto Sans";
       size = 11;
+    };
+  };
+
+  # === CONFIGURATION GNOME (dconf) ===
+  dconf.settings = {
+    "org/gnome/desktop/interface" = {
+      color-scheme = "prefer-dark";
+      enable-hot-corners = false;
+      show-battery-percentage = true;
+    };
+    
+    "org/gnome/desktop/wm/preferences" = {
+      button-layout = "appmenu:minimize,maximize,close";
+      num-workspaces = 4;
+    };
+    
+    "org/gnome/desktop/peripherals/touchpad" = {
+      tap-to-click = true;
+      natural-scroll = false;
+      two-finger-scrolling-enabled = true;
+    };
+    
+    "org/gnome/shell" = {
+      disable-user-extensions = false;
+      enabled-extensions = [
+        "user-theme@gnome-shell-extensions.gcampax.github.com"
+        "dash-to-dock@micxgx.gmail.com"
+        "appindicatorsupport@rgcjonas.gmail.com"
+      ];
+    };
+    
+    "org/gnome/shell/extensions/user-theme" = {
+      name = "Adwaita-dark";
+    };
+    
+    "org/gnome/desktop/screensaver" = {
+      lock-enabled = true;
+      lock-delay = "uint32 300";
     };
   };
 
@@ -592,8 +397,8 @@
         "x-scheme-handler/about" = "firefox.desktop";
         "x-scheme-handler/unknown" = "firefox.desktop";
         "application/pdf" = "firefox.desktop";
-        "image/jpeg" = "org.kde.gwenview.desktop";
-        "image/png" = "org.kde.gwenview.desktop";
+        "image/jpeg" = "org.gnome.eog.desktop";
+        "image/png" = "org.gnome.eog.desktop";
       };
     };
     
@@ -616,21 +421,7 @@
   # Permet à Home Manager de gérer lui-même ses services
   programs.home-manager.enable = true;
 
-  # === CONFIGURATION NUM LOCK PLASMA ===
-  # Service pour activer Num Lock au démarrage de la session KDE
-  systemd.user.services.numlock = {
-    Unit = {
-      Description = "Enable NumLock at startup";
-      After = [ "graphical-session.target" ];
-    };
-    Service = {
-      Type = "oneshot";
-      ExecStart = "${pkgs.numlockx}/bin/numlockx on";
-    };
-    Install = {
-      WantedBy = [ "default.target" ];
-    };
-  };
+  
 
   # === GESTION SÉCURISÉE DU TOKEN GITHUB ===
   # Script pour créer le fichier d'environnement avec le token GitHub

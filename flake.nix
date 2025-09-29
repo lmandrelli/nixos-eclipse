@@ -17,15 +17,11 @@
     # Support matériel spécialisé
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
     
-    # Hyprland - gestionnaire de fenêtres Wayland moderne
-    hyprland = {
-      url = "github:hyprwm/Hyprland";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    
     
   };
 
-  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, nixos-hardware, hyprland, ... }@inputs: {
+  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, nixos-hardware, ... }@inputs: {
     nixosConfigurations = {
       # Remplacez "nixos" par le nom de votre machine si différent
       nixos = nixpkgs.lib.nixosSystem {
