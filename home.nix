@@ -360,7 +360,7 @@
     
     "org/gnome/desktop/peripherals/touchpad" = {
       tap-to-click = true;
-      natural-scroll = false;
+      natural-scroll = true;
       two-finger-scrolling-enabled = true;
     };
     
