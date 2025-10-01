@@ -47,6 +47,10 @@
     # Zed - éditeur moderne écrit en Rust
     zed-editor
 
+    # Android Studio
+    android-studio-full
+    android-tools
+
     opencode
     
     # === TERMINAUX ===

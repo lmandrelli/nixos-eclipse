@@ -304,4 +304,7 @@
   # === CONFIGURATION SUDO ===
   security.sudo.enable = true;
 
+  # === LICENCE ANDROID ===
+  nixpkgs.config.android_sdk.accept_license = true;
+
 }
