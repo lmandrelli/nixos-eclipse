@@ -137,6 +137,10 @@
     
     # === APPIMAGE SUPPORT ===
     appimage-run  # Nécessaire pour exécuter les AppImages sur NixOS
+
+    typst
+
+    teams-for-linux
   ];
 
   # === GESTION DES APPIMAGES ===
