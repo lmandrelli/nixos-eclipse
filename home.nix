@@ -139,6 +139,7 @@
     appimage-run  # Nécessaire pour exécuter les AppImages sur NixOS
 
     typst
+    tinymist
 
     teams-for-linux
   ];
