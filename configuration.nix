@@ -293,6 +293,10 @@
     gnome-tweaks         # Outil de personnalisation GNOME
     dconf-editor         # Éditeur de configuration dconf
     glib                 # Bibliothèques GLib (nécessaire pour certaines applications)
+    
+    # Outils réseau et partage
+    samba                # Samba client et outils
+    cifs-utils           # Pour monter les partages CIFS/SMB
   ];
 
   # === SERVICES SPÉCIALISÉS ===
@@ -323,5 +327,42 @@
 
   # === LICENCE ANDROID ===
   nixpkgs.config.android_sdk.accept_license = true;
+
+  # === CONFIGURATION SAMBA ===
+  # Samba pour le partage de fichiers
+  services.samba = {
+    enable = true;
+    securityType = "user";
+    openFirewall = true;
+    settings = {
+      global = {
+        "workgroup" = "WORKGROUP";
+        "server string" = "nixos-eclipse";
+        "netbios name" = "nixos-eclipse";
+        "security" = "user";
+        "hosts allow" = "192.168.0. 127.0.0.1 localhost";
+        "hosts deny" = "0.0.0.0/0";
+        "guest account" = "nobody";
+        "map to guest" = "bad user";
+      };
+      
+      "malware-shared" = {
+        "path" = "/home/lmandrelli/DEV/Malware/shared";
+        "browseable" = "yes";
+        "read only" = "no";
+        "guest ok" = "yes";
+        "create mask" = "0644";
+        "directory mask" = "0755";
+        "force user" = "lmandrelli";
+        "force group" = "users";
+      };
+    };
+  };
+
+  # Service de découverte pour les hôtes Windows
+  services.samba-wsdd = {
+    enable = true;
+    openFirewall = true;
+  };
 
 }
