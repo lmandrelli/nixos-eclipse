@@ -142,6 +142,8 @@
     tinymist
 
     teams-for-linux
+
+    exegol
   ];
 
   # === GESTION DES APPIMAGES ===

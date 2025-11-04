@@ -243,7 +243,6 @@
     enable = true;
     qemu = {
       package = pkgs.qemu_kvm;
-      ovmf.enable = true;
       swtpm.enable = true;
     };
   };
@@ -276,6 +275,8 @@
     gnome-tweaks         # Outil de personnalisation GNOME
     dconf-editor         # Éditeur de configuration dconf
     glib                 # Bibliothèques GLib (nécessaire pour certaines applications)
+
+    virtiofsd
   ];
 
   # === SERVICES SPÉCIALISÉS ===
