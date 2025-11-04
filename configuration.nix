@@ -244,6 +244,17 @@
     qemu = {
       package = pkgs.qemu_kvm;
       swtpm.enable = true;
+      vhostUserPackages = with pkgs; [ virtiofsd ];
+    };
+  };
+  # Autostart default network
+  systemd.services.libvirtd-config = {
+    wantedBy = [ "multi-user.target" ];
+    after = [ "libvirtd.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = lib.mkForce "${pkgs.bash}/bin/bash -c '${pkgs.libvirt}/bin/virsh --connect qemu:///system net-info default | grep -q \"Active:.*no\" && ${pkgs.libvirt}/bin/virsh --connect qemu:///system net-start default || true'";
+      RemainAfterExit = true;
     };
   };
   programs.virt-manager.enable = true;
@@ -271,12 +282,12 @@
     # AppImage support
     appimage-run
     
+    
+    
     # === OUTILS GNOME SYSTÈME ===
     gnome-tweaks         # Outil de personnalisation GNOME
     dconf-editor         # Éditeur de configuration dconf
     glib                 # Bibliothèques GLib (nécessaire pour certaines applications)
-
-    virtiofsd
   ];
 
   # === SERVICES SPÉCIALISÉS ===
