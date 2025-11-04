@@ -247,18 +247,23 @@
       vhostUserPackages = with pkgs; [ virtiofsd ];
     };
   };
-  # Autostart default network
-  systemd.services.libvirtd-config = {
-    wantedBy = [ "multi-user.target" ];
-    after = [ "libvirtd.service" ];
-    serviceConfig = {
-      Type = "oneshot";
-      ExecStart = lib.mkForce "${pkgs.bash}/bin/bash -c '${pkgs.libvirt}/bin/virsh --connect qemu:///system net-info default | grep -q \"Active:.*no\" && ${pkgs.libvirt}/bin/virsh --connect qemu:///system net-start default || true'";
-      RemainAfterExit = true;
-    };
-  };
+  
   programs.virt-manager.enable = true;
   virtualisation.spiceUSBRedirection.enable = true;
+  
+  # Autostart libvirt default network
+  systemd.services.libvirt-default-network = {
+    description = "Start libvirt default network";
+    after = ["libvirtd.service"];
+    wantedBy = ["multi-user.target"];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.libvirt}/bin/virsh net-start default";
+      ExecStop = "${pkgs.libvirt}/bin/virsh net-destroy default";
+      User = "root";
+    };
+  };
 
   # === PACKAGES SYSTÈME ===
   # Packages disponibles pour tous les utilisateurs
