@@ -326,6 +326,10 @@
   # === CONFIGURATION SUDO ===
   security.sudo.enable = true;
 
+  # === CONFIGURATION ACL ===
+  # Support ACL pour les permissions étendues
+  boot.supportedFilesystems = [ "ext4" "btrfs" "xfs" ];
+
   # === LICENCE ANDROID ===
   nixpkgs.config.android_sdk.accept_license = true;
 
@@ -352,10 +356,15 @@
         "browseable" = "yes";
         "read only" = "no";
         "guest ok" = "yes";
-        "create mask" = "0644";
+        "create mask" = "0755";
         "directory mask" = "0755";
         "force user" = "lmandrelli";
         "force group" = "users";
+        "acl allow execute always" = "yes";
+        "nt acl support" = "yes";
+        "map acl inherit" = "yes";
+        "store dos attributes" = "yes";
+        "vfs objects" = "acl_xattr";
       };
     };
   };
