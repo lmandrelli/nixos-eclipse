@@ -280,6 +280,7 @@
 
     # Outils de développement de base
     gcc gnumake cmake
+    clang-tools
 
     # Navigateur de secours
     firefox
