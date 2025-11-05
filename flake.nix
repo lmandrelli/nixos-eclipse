@@ -8,6 +8,12 @@
     # Canal stable pour packages spécifiques
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.05";
     
+    # Canal master pour les derniers packages
+    nixpkgs-master.url = "github:NixOS/nixpkgs/master";
+    
+    # Canal dédié pour Android Studio (pinned to current flake.lock version)
+    channel_android_studio.url = "github:NixOS/nixpkgs/c9b6fb798541223bbb396d287d16f43520250518";
+    
     # Home Manager pour la gestion des configurations utilisateur
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -21,20 +27,29 @@
     
   };
 
-  outputs = { self, nixpkgs, nixpkgs-stable, home-manager, nixos-hardware, ... }@inputs: {
+  outputs = { self, nixpkgs, nixpkgs-stable, nixpkgs-master, channel_android_studio, home-manager, nixos-hardware, ... }@inputs: {
     nixosConfigurations = {
       # Remplacez "nixos" par le nom de votre machine si différent
       nixos = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [
-          # Overlay pour rendre les packages stable disponibles
+          # Overlay pour rendre les packages stable, master et android studio disponibles
           ({ config, pkgs, ... }: {
             nixpkgs.overlays = [
               (final: prev: {
                 stable = import nixpkgs-stable {
                   system = prev.system;
                   config.allowUnfree = true;
+                };
+                master = import nixpkgs-master {
+                  system = prev.system;
+                  config.allowUnfree = true;
+                };
+                android-studio-channel = import channel_android_studio {
+                  system = prev.system;
+                  config.allowUnfree = true;
+                  config.android_sdk.accept_license = true;
                 };
               })
             ];

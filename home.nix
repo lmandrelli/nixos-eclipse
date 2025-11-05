@@ -47,11 +47,11 @@
     # Zed - éditeur moderne écrit en Rust
     zed-editor
 
-    # Android Studio
-    android-studio-full
-    android-tools
+    # Android Studio (pinned to dedicated channel)
+    pkgs.android-studio-channel.android-studio-full
+    pkgs.android-studio-channel.android-tools
 
-    opencode
+    master.opencode
     
     # === TERMINAUX ===
     # Warp - terminal moderne avec IA intégrée
