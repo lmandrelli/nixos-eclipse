@@ -144,6 +144,8 @@
     teams-for-linux
 
     exegol
+
+    ventoy-full-gtk
   ];
 
   # === GESTION DES APPIMAGES ===

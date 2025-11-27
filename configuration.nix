@@ -97,6 +97,11 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  # Allow insecure packages
+  nixpkgs.config.permittedInsecurePackages = [
+    "ventoy-gtk3-1.1.07"
+  ];
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   # Note: Main package list is defined later in the file
