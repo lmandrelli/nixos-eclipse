@@ -298,6 +298,10 @@
     # Outils réseau et partage
     samba                # Samba client et outils
     cifs-utils           # Pour monter les partages CIFS/SMB
+
+    gparted
+    exfat
+    exfatprogs
   ];
 
   # === SERVICES SPÉCIALISÉS ===
